@@ -1,0 +1,31 @@
+From dddc269378565413394bede4717f67b85180c757 Mon Sep 17 00:00:00 2001
+From: Marouene Boubakri <marouene.boubakri@nxp.com>
+Date: Thu, 29 Feb 2024 22:46:41 +0100
+Subject: [PATCH 2/2] nxp_iot_agent: define custom EdgeLock 2GO hostname/port
+
+Allow defining custom values for EDGELOCK2GO_HOSTNAME and EDGELOCK2GO_PORT
+via CMake variables.
+
+Signed-off-by: Marouene Boubakri <marouene.boubakri@nxp.com>
+---
+ CMakeLists.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 692c9f0..b7d8c4f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -114,6 +114,10 @@ ENDIF()
+ 
+ ADD_SUBDIRECTORY(demos)
+ 
++SET(EDGELOCK2GO_HOSTNAME "CHANGE THIS! - company specific hostname" CACHE STRING "EdgeLock2GO Hostname")
++SET(EDGELOCK2GO_PORT "443" CACHE STRING "EdgeLock2GO Port")
++ADD_COMPILE_DEFINITIONS(EDGELOCK2GO_HOSTNAME="${EDGELOCK2GO_HOSTNAME}" EDGELOCK2GO_PORT=${EDGELOCK2GO_PORT})
++
+ IF(NXPProprietary)
+     IF(SSS_HAVE_HOSTCRYPTO_OPENSSL)
+         IF(SSS_HAVE_APPLET_SE05X_IOT)
+-- 
+2.25.1
+

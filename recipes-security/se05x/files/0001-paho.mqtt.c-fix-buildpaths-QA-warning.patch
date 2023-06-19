@@ -1,0 +1,35 @@
+From 5bb6effdb1a33a561adfdcd9cc10d6aa7162cc2a Mon Sep 17 00:00:00 2001
+From: Marouene Boubakri <marouene.boubakri@nxp.com>
+Date: Thu, 29 Feb 2024 04:52:45 +0100
+Subject: [PATCH 1/1] paho.mqtt.c: fix buildpaths QA warning
+
+When compiling Paho-MQTT, the generated eclipse-paho-mqtt-cConfig.cmake
+contains the host path in the INTERFACE_LINK_LIBRARIES and, threfore,
+Yocto complains about that file containing reference to TMPDIR.
+The fix would be replacing:
+SET(LIBS_SYSTEM "${LIBS_SYSTEM} ${LIB_ANL}")
+with:
+SET(LIBS_SYSTEM "${LIBS_SYSTEM}" anl)
+To satisfy QA.
+
+Signed-off-by: Marouene Boubakri <marouene.boubakri@nxp.com>
+---
+ ext/paho.mqtt.c/src/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/paho.mqtt.c/src/CMakeLists.txt b/ext/paho.mqtt.c/src/CMakeLists.txt
+index 20b578a..b7756ff 100644
+--- a/ext/paho.mqtt.c/src/CMakeLists.txt
++++ b/ext/paho.mqtt.c/src/CMakeLists.txt
+@@ -65,7 +65,7 @@ ELSEIF (UNIX)
+         # it or build will fail on uclibc or musl
+         FIND_LIBRARY(LIB_ANL anl)
+         IF(LIB_ANL)
+-            SET(LIBS_SYSTEM "${LIBS_SYSTEM} ${LIB_ANL}")
++            SET(LIBS_SYSTEM "${LIBS_SYSTEM}" anl)
+         ENDIF()
+         ADD_DEFINITIONS(-D_GNU_SOURCE -fvisibility=hidden)
+     ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Android")
+-- 
+2.25.1
+

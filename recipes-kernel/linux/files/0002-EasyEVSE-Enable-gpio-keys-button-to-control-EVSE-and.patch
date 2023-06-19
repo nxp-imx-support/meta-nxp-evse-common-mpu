@@ -1,0 +1,78 @@
+From 5f9539ffc23c7a2718e71d54d08822eac24d36b9 Mon Sep 17 00:00:00 2001
+From: Peter Tian <peter.tian@nxp.com>
+Date: Mon, 20 Jan 2025 06:26:05 +0100
+Subject: [PATCH 2/2] [EasyEVSE] Enable gpio-keys button to control EVSE and
+ PEV
+
+Signed-off-by: Peter Tian <peter.tian@nxp.com>
+---
+ .../freescale/imx93-11x11-evk-evse-lvds.dts   | 19 ++++++++++++++++
+ .../dts/freescale/imx93-11x11-evk-evse.dts    | 22 +++++++++++++++++++
+ 2 files changed, 41 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-lvds.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-lvds.dts
+index 555c562ec08b..664216df880d 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-lvds.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-lvds.dts
+@@ -42,6 +42,25 @@ panel_lvds_in: endpoint {
+ 			};
+ 		};
+ 	};
++	sw_keys {
++		compatible = "gpio-keys";
++
++		btn1: pause {
++			label = "Pause";
++			gpios = <&pcal6524 5 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_PAUSE>;
++			interrupt-parent = <&pcal6524>;
++			interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
++		};
++
++		btn2: new {
++			label = "New";
++			gpios = <&pcal6524 6 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_NEW>;
++			interrupt-parent = <&pcal6524>;
++			interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
++		};
++	};
+ };
+ 
+ &adv7535 {
+diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts
+index 2b3b827d5257..7aa8e1dbbd55 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts
+@@ -10,6 +10,28 @@
+ /delete-node/ &dsi_to_adv7535;
+ /delete-node/ &adv7535_to_dsi;
+ 
++/ {
++        sw_keys {
++                compatible = "gpio-keys";
++
++                btn1: pause {
++                        label = "Pause";
++                        gpios = <&pcal6524 5 GPIO_ACTIVE_LOW>;
++                        linux,code = <KEY_PAUSE>;
++                        interrupt-parent = <&pcal6524>;
++                        interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
++                };
++
++                btn2: new {
++                        label = "New";
++                        gpios = <&pcal6524 6 GPIO_ACTIVE_LOW>;
++                        linux,code = <KEY_NEW>;
++                        interrupt-parent = <&pcal6524>;
++                        interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
++                };
++        };
++};
++
+ &adv7535 {
+ 	status = "disabled";
+ };
+-- 
+2.34.1
+

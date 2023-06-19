@@ -1,0 +1,27 @@
+From 970f9581ccf7411149cdecc66cd15b855e1317ab Mon Sep 17 00:00:00 2001
+From: Ionut Vicovan <nxa11506@lsv15545.swis.ro-buh01.nxp.com>
+Date: Thu, 25 Apr 2024 13:40:38 +0000
+Subject: [PATCH] [EasyEVSE] Select by default the device tree for the LVDS
+ display
+
+Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+---
+ configs/imx93_11x11_evk_evse_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configs/imx93_11x11_evk_evse_defconfig b/configs/imx93_11x11_evk_evse_defconfig
+index e82885b113..1b9c9d084f 100644
+--- a/configs/imx93_11x11_evk_evse_defconfig
++++ b/configs/imx93_11x11_evk_evse_defconfig
+@@ -29,7 +29,7 @@ CONFIG_REMAKE_ELF=y
+ CONFIG_SYS_MONITOR_LEN=524288
+ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_BOOTCOMMAND="run distro_bootcmd;run bsp_bootcmd"
+-CONFIG_DEFAULT_FDT_FILE="imx93-11x11-evk-evse.dtb"
++CONFIG_DEFAULT_FDT_FILE="imx93-11x11-evk-evse-lvds.dtb"
+ CONFIG_ARCH_MISC_INIT=y
+ CONFIG_BOARD_EARLY_INIT_F=y
+ CONFIG_BOARD_LATE_INIT=y
+-- 
+2.25.1
+

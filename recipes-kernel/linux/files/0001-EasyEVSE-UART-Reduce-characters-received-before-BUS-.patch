@@ -1,0 +1,27 @@
+From bd1ce9e0f6a71fe4f1e1f9ee47ed6c6c33f5e650 Mon Sep 17 00:00:00 2001
+From: Peter Tian <peter.tian@nxp.com>
+Date: Mon, 20 Jan 2025 04:54:54 +0100
+Subject: [PATCH 1/2] [EasyEVSE] UART: Reduce characters received before BUS
+ idle
+
+Signed-off-by: Peter Tian <peter.tian@nxp.com>
+---
+ drivers/tty/serial/fsl_lpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 90f47c730cd8..b9b8ccc6ef31 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -238,7 +238,7 @@
+ #define GLOBAL_RST_MAX_US	40
+ 
+ #define UARTFIFO_RXIDEN_RDRF	0x3
+-#define UARTCTRL_IDLECFG	0x7
++#define UARTCTRL_IDLECFG	0x3
+ 
+ /* Rx DMA timeout in ms, which is used to calculate Rx ring buffer size */
+ #define DMA_RX_TIMEOUT		(10)
+-- 
+2.34.1
+

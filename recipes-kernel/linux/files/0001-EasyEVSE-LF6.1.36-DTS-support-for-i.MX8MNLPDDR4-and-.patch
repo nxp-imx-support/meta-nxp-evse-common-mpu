@@ -1,0 +1,373 @@
+From 409f930c97d6eaaa15748b1dc832002d92d3b862 Mon Sep 17 00:00:00 2001
+From: OTS <octavian-tiberiu.sirbu@nxp.com>
+Date: Fri, 22 Sep 2023 01:10:20 +0300
+Subject: [PATCH] [EasyEVSE-LF6.1.36]DTS support for i.MX8MNLPDDR4 and i.MX93
+
+Signed-off-by: OTS <octavian-tiberiu.sirbu@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/Makefile        |   3 +
+ .../imx8mn-evk-evse-ph1_2-cg5317.dts          |  41 ++++++
+ .../boot/dts/freescale/imx8mn-evk-evse.dts    |  93 ++++++++++++++
+ .../imx93-11x11-evk-evse-ph1_2-cg5317.dts     |  52 ++++++++
+ .../dts/freescale/imx93-11x11-evk-evse.dts    | 119 ++++++++++++++++++
+ 5 files changed, 308 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mn-evk-evse-ph1_2-cg5317.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mn-evk-evse.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-ph1_2-cg5317.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts
+
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 7b1a129e6b9f..cca79473023c 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -111,6 +111,8 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mn-ddr3l-evk-ak5558.dtb imx8mn-ddr4-evk-ak5558.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mn-ab2.dtb imx8mn-ddr3l-ab2.dtb imx8mn-ddr4-ab2.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mn-evk-iqaudio-dacplus.dtb imx8mn-evk-iqaudio-dacpro.dtb imx8mn-evk-hifiberry-dacplus.dtb \
+ 			  imx8mn-evk-hifiberry-dac2.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mn-evk-evse.dtb imx8mn-evk-evse-ph1_2-cg5317.dtb
++
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb imx8mp-evk-rm67191.dtb imx8mp-evk-it6263-lvds-dual-channel.dtb \
+ 			  imx8mp-evk-pcie-ep.dtb  imx8mp-evk-rpmsg.dtb imx8mp-evk-ecspi-slave.dtb \
+ 			  imx8mp-evk-jdi-wuxga-lvds-panel.dtb imx8mp-evk-flexcan2.dtb \
+@@ -377,6 +379,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb \
+ 			  imx93-9x9-qsb-lpspi.dtb imx93-9x9-qsb-lpspi-slave.dtb \
+ 			  imx93-9x9-qsb-ld.dtb imx93-9x9-qsb-aud-hat.dtb \
+ 			  imx93-9x9-qsb-rpmsg.dtb imx93-9x9-qsb-rpmsg-lpv.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk-evse.dtb imx93-11x11-evk-evse-ph1_2-cg5317.dtb
+ 
+ dtb-$(CONFIG_ARCH_MXC) += imx91p-9x9-qsb.dtb imx91p-9x9-qsb-aud-hat.dtb \
+ 			  imx91p-9x9-qsb-mt9m114.dtb \
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-evk-evse-ph1_2-cg5317.dts b/arch/arm64/boot/dts/freescale/imx8mn-evk-evse-ph1_2-cg5317.dts
+new file mode 100644
+index 000000000000..c4310e3049ee
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mn-evk-evse-ph1_2-cg5317.dts
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2023 NXP
++ */
++
++/dts-v1/;
++
++#include "imx8mn-evk-evse.dts"
++
++/delete-node/ &nxpnfc;
++
++&ecspi2 {
++	pinctrl-2 = <&pinctrl_cg5317>;	
++	spidev0: spi@0 {
++		compatible = "lwn,bk4";
++		reg = <0x0>;
++		spi-cpha;
++		spi-max-frequency = <8000000>;
++		spi-cpol;
++	};
++};
++
++&i2c3 {
++	nxpnfc: nxpnfc@28 {
++		compatible = "nxp,nxpnfc";
++		reg = <0x28>;
++		nxp,nxpnfc-irq = <&gpio3 23 GPIO_ACTIVE_HIGH>;
++		nxp,nxpnfc-ven = <&gpio3 21 GPIO_ACTIVE_HIGH>;
++		nxp,nxpnfc-fw-dwnld = <&gpio3 20 GPIO_ACTIVE_HIGH>;
++	};
++};
++
++&iomuxc {
++	pinctrl_cg5317: cg5317grp {
++                fsl,pins = <
++                        MX8MN_IOMUXC_ECSPI1_SS0_GPIO5_IO9           0x100
++                        MX8MN_IOMUXC_ECSPI1_MISO_GPIO5_IO8          0x100
++                >;
++        };
++
++};
+\ No newline at end of file
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-evk-evse.dts b/arch/arm64/boot/dts/freescale/imx8mn-evk-evse.dts
+new file mode 100644
+index 000000000000..b98a3ad87dce
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mn-evk-evse.dts
+@@ -0,0 +1,93 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2023 NXP
++ */
++
++/dts-v1/;
++
++#include "imx8mn-evk.dts"
++
++&adv_bridge {
++	status = "disabled";
++};
++
++&ecspi2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ecspi2 &pinctrl_ecspi2_cs>;
++	cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
++	status = "okay";
++
++	nxpnfc: nxpnfc@0 {
++		compatible = "nxp,nxpnfc";
++		reg = <0>;
++		nxp,nxpnfc-irq = <&gpio3 23 GPIO_ACTIVE_HIGH>;
++		nxp,nxpnfc-ven = <&gpio3 21 GPIO_ACTIVE_HIGH>;
++		nxp,nxpnfc-fw-dwnld = <&gpio3 20 GPIO_ACTIVE_HIGH>;
++		spi-max-frequency = <7000000>;
++	};
++};
++
++&i2c2 {
++	touchscreen@14 {
++		compatible = "goodix,gt1151";
++		reg = <0x14>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_i2c2_synaptics_dsx_io>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
++		irq-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
++		edge-failling-trigger;
++		touchscreen-size-x = <1080>;
++		touchscreen-size-y = <1920>;
++	};
++};
++
++&micfil {
++	status = "disabled";
++};
++
++&mipi_dsi {
++	panel@0 {
++		compatible = "raydium,rm67199";
++		reg = <0>;
++		pinctrl-0 = <&pinctrl_mipi_dsi_en>;
++		reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
++		dsi-lanes = <4>;
++		video-mode = <2>;	/* 0: burst mode
++					 * 1: non-burst mode with sync event
++					 * 2: non-burst mode with sync pulse
++					 * 3: command mode
++					 */
++		panel-width-mm = <68>;
++		panel-height-mm = <121>;
++		status = "okay";
++	};
++};
++
++&uart3 {
++	/delete-property/ uart-has-rtscts;
++	pinctrl-0 = <&pinctrl_uart3_meter>;
++};
++
++&iomuxc {
++	pinctrl_ecspi2: ecspi2grp {
++		fsl,pins = <
++			MX8MN_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK		0x82
++			MX8MN_IOMUXC_ECSPI2_MOSI_ECSPI2_MOSI		0x82
++			MX8MN_IOMUXC_ECSPI2_MISO_ECSPI2_MISO		0x82
++		>;
++	};
++
++	pinctrl_ecspi2_cs: ecspi2cs {
++		fsl,pins = <
++			MX8MN_IOMUXC_ECSPI2_SS0_GPIO5_IO13		0x41
++		>;
++	};
++
++	pinctrl_uart3_meter: uart3grp {
++		fsl,pins = <
++			MX8MN_IOMUXC_ECSPI1_SCLK_UART3_DCE_RX		0x140
++			MX8MN_IOMUXC_ECSPI1_MOSI_UART3_DCE_TX		0x140
++		>;
++	};
++};
+\ No newline at end of file
+diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-ph1_2-cg5317.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-ph1_2-cg5317.dts
+new file mode 100644
+index 000000000000..97e01d7b99dd
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse-ph1_2-cg5317.dts
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2023 NXP
++ */
++
++/dts-v1/;
++
++#include "imx93-11x11-evk-evse.dts"
++
++&lpspi7 {
++	fsl,spi-num-chipselects = <1>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_lpspi7 &pinctrl_lpspi7_cs>;
++	pinctrl-1 = <&pinctrl_lpspi7 &pinctrl_lpspi7_cs>;
++	pinctrl-2 = <&pinctrl_cg5317>;
++	cs-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
++	status = "okay";
++
++	spidev0: spi@0 {
++		compatible = "lwn,bk4";
++		reg = <0x0>;
++		spi-cpha;
++		spi-max-frequency = <8000000>;
++		spi-cpol;
++	};
++
++};
++
++&iomuxc {
++	pinctrl_lpspi7: lpspi7grp {
++		fsl,pins = <
++			MX93_PAD_GPIO_IO05__LPSPI7_SIN		0x3fe
++			MX93_PAD_GPIO_IO06__LPSPI7_SOUT		0x3fe
++			MX93_PAD_GPIO_IO07__LPSPI7_SCK		0x3fe
++		>;
++	};
++
++	pinctrl_lpspi7_cs: lpspi7cs {
++		fsl,pins = <
++			MX93_PAD_GPIO_IO04__GPIO2_IO04		0x3fe
++		>;
++	};
++
++	pinctrl_cg5317: cg5317grp {
++                fsl,pins = <
++                        MX93_PAD_GPIO_IO12__GPIO2_IO12		0x50e
++                        MX93_PAD_GPIO_IO13__GPIO2_IO13          0x50e
++                        MX93_PAD_GPIO_IO18__GPIO2_IO18          0x50e
++                >;
++        };
++
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts
+new file mode 100644
+index 000000000000..2b3b827d5257
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk-evse.dts
+@@ -0,0 +1,119 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2023 NXP
++ */
++
++/dts-v1/;
++
++#include "imx93-11x11-evk.dts"
++
++/delete-node/ &dsi_to_adv7535;
++/delete-node/ &adv7535_to_dsi;
++
++&adv7535 {
++	status = "disabled";
++};
++
++&dsi {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	panel@0 {
++		compatible = "raydium,rm67199";
++		reg = <0>;
++		reset-gpio = <&adp5585gpio 6 GPIO_ACTIVE_LOW>;
++		dsi-lanes = <4>;
++		video-mode = <2>;	/* 0: burst mode
++					 * 1: non-burst mode with sync event
++					 * 2: non-burst mode with sync pulse
++					 */
++		width-mm = <68>;
++		height-mm = <121>;
++		status = "okay";
++
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&dsi_out>;
++			};
++		};
++	};
++
++	ports {
++		port@1 {
++			reg = <1>;
++
++			dsi_out: endpoint {
++				remote-endpoint = <&panel_in>;
++			};
++		};
++	};
++};
++
++&lcdif {
++	assigned-clock-rates = <484000000>, <121000000>, <400000000>, <133333333>;
++};
++
++&lpi2c1 {
++	touchscreen@14 {
++		compatible = "goodix,gt1151";
++		reg = <0x14>;
++		interrupt-parent = <&pcal6524>;
++		interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
++		irq-gpios = <&pcal6524 7 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&adp5585gpio 9 GPIO_ACTIVE_HIGH>;
++		edge-failling-trigger;
++		touchscreen-size-x = <1080>;
++		touchscreen-size-y = <1920>;
++	};
++};
++
++&lpspi6 {
++	fsl,spi-num-chipselects = <1>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_lpspi6 &pinctrl_lpspi6_cs>;
++	pinctrl-1 = <&pinctrl_lpspi6 &pinctrl_lpspi6_cs>;
++	cs-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
++	status = "okay";
++
++	nxpnfc: nxpnfc@0 {
++		compatible = "nxp,nxpnfc";
++		reg = <0>;
++		nxp,nxpnfc-irq = <&gpio2 22 GPIO_ACTIVE_HIGH>;
++		nxp,nxpnfc-ven = <&gpio2 23 GPIO_ACTIVE_HIGH>;
++		nxp,nxpnfc-fw-dwnld = <&gpio2 24 GPIO_ACTIVE_HIGH>;
++		spi-max-frequency = <7000000>;
++	};	
++};
++
++&lpuart3 { /* Meter Board*/
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart3>;
++	status = "okay";
++};
++
++&xcvr {
++	status = "disabled";
++};
++
++&iomuxc {
++	pinctrl_lpspi6: lpspi6grp {
++		fsl,pins = <
++			MX93_PAD_GPIO_IO01__LPSPI6_SIN		0x3fe
++			MX93_PAD_GPIO_IO02__LPSPI6_SOUT		0x3fe
++			MX93_PAD_GPIO_IO03__LPSPI6_SCK		0x3fe
++		>;
++	};
++
++	pinctrl_lpspi6_cs: lpspi6cs {
++		fsl,pins = <
++			MX93_PAD_GPIO_IO00__GPIO2_IO00		0x3fe
++		>;
++	};
++
++	pinctrl_uart3: uart3grp {
++		fsl,pins = <
++			MX93_PAD_GPIO_IO14__LPUART3_TX		0x31e
++			MX93_PAD_GPIO_IO15__LPUART3_RX		0x31e
++		>;
++	};
++};
+-- 
+2.34.1
+

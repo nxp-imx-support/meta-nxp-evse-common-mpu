@@ -1,0 +1,102 @@
+From b9b897ecd10dc5dd6f4ceeb15fdf6efff15850dd Mon Sep 17 00:00:00 2001
+From: Mario Castaneda <mario.ignacio.castaneda.lopez@nxp.com>
+Date: Tue, 10 Oct 2023 11:26:15 -0700
+Subject: [PATCH] cmake: externally-configurable toolchain
+
+Make use of common make(1) and cmake(1) environment variables to
+configure the toolchain for Project compatibility. Eliminate
+hard-code paths to the cross-toolchain using environmental variables.
+Adding the recipe_sysroot path and adding SPI_LINUX_SPI_DEVICE define
+/dev/spidev1.0.
+
+Signed-off-by: Mario Castaneda <mario.ignacio.castaneda.lopez@nxp.com>
+---
+ .../v2g_evse_pnc_cg5317_eth_linux/feat_appl.h    |  2 ++
+ .../v2g_evse_pnc_cg5317_spi_linux/feat_appl.h    |  2 ++
+ configs/v2g_pev_pnc_cg5317_eth_linux/feat_appl.h |  2 ++
+ configs/v2g_pev_pnc_cg5317_spi_linux/feat_appl.h |  2 ++
+ target/imx_linux/imx_linux_toolchain.cmake       | 16 +++++-----------
+ 5 files changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/configs/v2g_evse_pnc_cg5317_eth_linux/feat_appl.h b/configs/v2g_evse_pnc_cg5317_eth_linux/feat_appl.h
+index f60ffd6..405c341 100644
+--- a/configs/v2g_evse_pnc_cg5317_eth_linux/feat_appl.h
++++ b/configs/v2g_evse_pnc_cg5317_eth_linux/feat_appl.h
+@@ -72,6 +72,8 @@
+ 
+ #define REFAPP_SYSTEM_EXT_DEVICE_INFO    0   /**< Enable extended device informations. */
+ 
++#define SPI_LINUX_SPI_DEVICE "/dev/spidev1.0" /*IMX dev/spidev1.0*/
++
+ /* --------------------------------------------------- */
+ /* common reference application settings */
+ /* --------------------------------------------------- */
+diff --git a/configs/v2g_evse_pnc_cg5317_spi_linux/feat_appl.h b/configs/v2g_evse_pnc_cg5317_spi_linux/feat_appl.h
+index f60ffd6..405c341 100644
+--- a/configs/v2g_evse_pnc_cg5317_spi_linux/feat_appl.h
++++ b/configs/v2g_evse_pnc_cg5317_spi_linux/feat_appl.h
+@@ -72,6 +72,8 @@
+ 
+ #define REFAPP_SYSTEM_EXT_DEVICE_INFO    0   /**< Enable extended device informations. */
+ 
++#define SPI_LINUX_SPI_DEVICE "/dev/spidev1.0" /*IMX dev/spidev1.0*/
++
+ /* --------------------------------------------------- */
+ /* common reference application settings */
+ /* --------------------------------------------------- */
+diff --git a/configs/v2g_pev_pnc_cg5317_eth_linux/feat_appl.h b/configs/v2g_pev_pnc_cg5317_eth_linux/feat_appl.h
+index 8fd2f5a..e24067d 100644
+--- a/configs/v2g_pev_pnc_cg5317_eth_linux/feat_appl.h
++++ b/configs/v2g_pev_pnc_cg5317_eth_linux/feat_appl.h
+@@ -72,6 +72,8 @@
+ 
+ #define REFAPP_SYSTEM_EXT_DEVICE_INFO    0   /**< Enable extended device informations. */
+ 
++#define SPI_LINUX_SPI_DEVICE "/dev/spidev1.0" /*IMX dev/spidev1.0*/
++
+ /* --------------------------------------------------- */
+ /* common reference application settings */
+ /* --------------------------------------------------- */
+diff --git a/configs/v2g_pev_pnc_cg5317_spi_linux/feat_appl.h b/configs/v2g_pev_pnc_cg5317_spi_linux/feat_appl.h
+index 8fd2f5a..e24067d 100644
+--- a/configs/v2g_pev_pnc_cg5317_spi_linux/feat_appl.h
++++ b/configs/v2g_pev_pnc_cg5317_spi_linux/feat_appl.h
+@@ -72,6 +72,8 @@
+ 
+ #define REFAPP_SYSTEM_EXT_DEVICE_INFO    0   /**< Enable extended device informations. */
+ 
++#define SPI_LINUX_SPI_DEVICE "/dev/spidev1.0" /*IMX dev/spidev1.0*/
++
+ /* --------------------------------------------------- */
+ /* common reference application settings */
+ /* --------------------------------------------------- */
+diff --git a/target/imx_linux/imx_linux_toolchain.cmake b/target/imx_linux/imx_linux_toolchain.cmake
+index 4dcfc12..90ced69 100644
+--- a/target/imx_linux/imx_linux_toolchain.cmake
++++ b/target/imx_linux/imx_linux_toolchain.cmake
+@@ -1,17 +1,11 @@
+ set(CMAKE_SYSTEM_NAME Linux)
+ set(CMAKE_SYSTEM_PROCESSOR arm64)
+ 
+-set(OECORE_SYSROOTS_PATH "/opt/fsl-imx-internal-xwayland/6.1-mickledore/sysroots")
+-
+-set(CMAKE_SYSROOT "${OECORE_SYSROOTS_PATH}/armv8a-poky-linux")
+-
+-set(CMAKE_C_COMPILER "${OECORE_SYSROOTS_PATH}/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-gcc")
+-set(CMAKE_CXX_COMPILER "${OECORE_SYSROOTS_PATH}/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-g++")
+-set(CMAKE_LINKER "${OECORE_SYSROOTS_PATH}/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-ld")
+-set(CMAKE_SIZE "${OECORE_SYSROOTS_PATH}/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-size")
+-
+-#set(CMAKE_C_FLAGS "-Wextra -pedantic -mthumb -mfloat-abi=hard -mcpu=cortex-a53 -Og -pipe -g -feliminate-unused-debug-types")
+-#set(CMAKE_CXX_FLAGS "-Wextra -pedantic -mthumb -mfloat-abi=hard -mcpu=cortex-a53 -Og -pipe -g -feliminate-unused-debug-types")
++set(CMAKE_SYSROOT "$ENV{PKG_CONFIG_SYSROOT_DIR}")
++set(CMAKE_C_COMPILER "$ENV{CROSS_COMPILE}gcc")
++set(CMAKE_CXX_COMPILER "$ENV{CROSS_COMPILE}g++")
++set(CMAKE_LINKER "$ENV{CROSS_COMPILE}ld")
++set(CMAKE_SIZE "$ENV{CROSS_COMPILE}size")
+ 
+ set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
+ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+-- 
+2.25.1
+

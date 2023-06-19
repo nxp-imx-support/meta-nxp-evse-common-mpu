@@ -1,0 +1,5 @@
+EXTRA_OEMAKE:append = " \
+    CFG_PKCS11_TA=y \
+    CFG_PKCS11_TA_TOKEN_COUNT=1 \
+    CFG_PKCS11_TA_HEAP_SIZE=131072 \
+    "
