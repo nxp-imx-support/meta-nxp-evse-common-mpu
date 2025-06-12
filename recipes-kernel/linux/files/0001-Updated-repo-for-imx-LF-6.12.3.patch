@@ -1,0 +1,244 @@
+From ae8c39df8e8098e3a08836ed3a3ba1644169381e Mon Sep 17 00:00:00 2001
+From: Octavian-Tiberiu Sirbu <octavian-tiberiu.sirbu@nxp.com>
+Date: Fri, 14 Mar 2025 17:21:17 +0200
+Subject: [PATCH] Updated repo for imx LF 6.12.3
+
+Signed-off-by: Octavian-Tiberiu Sirbu <octavian-tiberiu.sirbu@nxp.com>
+Upstream-Status: Pending
+---
+ Makefile                  |  2 +-
+ {nfc => pn7160}/Makefile  |  4 ++--
+ {nfc => pn7160}/common.c  |  2 +-
+ {nfc => pn7160}/common.h  |  8 --------
+ {nfc => pn7160}/i2c_drv.c | 11 +++++------
+ {nfc => pn7160}/i2c_drv.h |  5 ++---
+ {nfc => pn7160}/spi_drv.c |  9 ++++-----
+ {nfc => pn7160}/spi_drv.h |  2 +-
+ 8 files changed, 16 insertions(+), 27 deletions(-)
+ rename {nfc => pn7160}/Makefile (64%)
+ rename {nfc => pn7160}/common.c (99%)
+ rename {nfc => pn7160}/common.h (95%)
+ rename {nfc => pn7160}/i2c_drv.c (98%)
+ rename {nfc => pn7160}/i2c_drv.h (91%)
+ rename {nfc => pn7160}/spi_drv.c (99%)
+ rename {nfc => pn7160}/spi_drv.h (97%)
+
+diff --git a/Makefile b/Makefile
+index 2a33c73..f401307 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,4 @@
+ #
+ # Makefile for the kernel nfc device drivers.
+ #
+-obj-y				+= nfc/
++obj-y				+= pn7160/
+diff --git a/nfc/Makefile b/pn7160/Makefile
+similarity index 64%
+rename from nfc/Makefile
+rename to pn7160/Makefile
+index c31b9e0..4bf2f5d 100755
+--- a/nfc/Makefile
++++ b/pn7160/Makefile
+@@ -1,8 +1,8 @@
+ #
+ # Makefile for nfc devices
+ #
+-obj-$(CONFIG_NXP_NFC_I2C)		+= nxpnfc_i2c.o
++obj-y		+= nxpnfc_i2c.o
+ nxpnfc_i2c-objs				:= common.o i2c_drv.o
+-obj-$(CONFIG_NXP_NFC_SPI)		+= nxpnfc_spi.o
++obj-y		+= nxpnfc_spi.o
+ nxpnfc_spi-objs				:= common.o spi_drv.o
+ #ccflags-y                      += -DDEBUG
+diff --git a/nfc/common.c b/pn7160/common.c
+similarity index 99%
+rename from nfc/common.c
+rename to pn7160/common.c
+index 0a305b7..f69d8f7 100755
+--- a/nfc/common.c
++++ b/pn7160/common.c
+@@ -183,7 +183,7 @@ int nfc_misc_register(struct nfc_dev *nfc_dev,
+ 		       ret);
+ 		return ret;
+ 	}
+-	nfc_dev->nfc_class = class_create(THIS_MODULE, classname);
++	nfc_dev->nfc_class = class_create(classname);
+ 	if (IS_ERR(nfc_dev->nfc_class)) {
+ 		ret = PTR_ERR(nfc_dev->nfc_class);
+ 		pr_err("%s: failed to register device class ret %d\n", __func__,
+diff --git a/nfc/common.h b/pn7160/common.h
+similarity index 95%
+rename from nfc/common.h
+rename to pn7160/common.h
+index 678177b..5383950 100755
+--- a/nfc/common.h
++++ b/pn7160/common.h
+@@ -22,13 +22,9 @@
+ 
+ #include <linux/cdev.h>
+ 
+-#if IS_ENABLED(CONFIG_NXP_NFC_I2C)
+ #include "i2c_drv.h"
+-#endif //IS_ENABLED(CONFIG_NXP_NFC_I2C)
+ 
+-#if IS_ENABLED(CONFIG_NXP_NFC_SPI)
+ #include "spi_drv.h"
+-#endif //IS_ENABLED(CONFIG_NXP_NFC_SPI)
+ 
+ /* Max device count for this driver */
+ #define DEV_COUNT			1
+@@ -174,12 +170,8 @@ struct nfc_dev {
+ 	/* NFC VEN pin state */
+ 	bool nfc_ven_enabled;
+ 	union {
+-	#if IS_ENABLED(CONFIG_NXP_NFC_I2C)
+ 		struct i2c_dev i2c_dev;
+-	#endif //IS_ENABLED(CONFIG_NXP_NFC_I2C)
+-	#if IS_ENABLED(CONFIG_NXP_NFC_SPI)
+ 		struct spi_dev spi_dev;
+-	#endif //IS_ENABLED(CONFIG_NXP_NFC_SPI)
+ 	};
+ 	struct platform_configs configs;
+ 
+diff --git a/nfc/i2c_drv.c b/pn7160/i2c_drv.c
+similarity index 98%
+rename from nfc/i2c_drv.c
+rename to pn7160/i2c_drv.c
+index 350609e..b82e3f0 100755
+--- a/nfc/i2c_drv.c
++++ b/pn7160/i2c_drv.c
+@@ -259,7 +259,6 @@ ssize_t nfc_i2c_dev_write(struct file *filp, const char __user *buf,
+ 
+ static const struct file_operations nfc_i2c_dev_fops = {
+ 	.owner = THIS_MODULE,
+-	.llseek = no_llseek,
+ 	.read = nfc_i2c_dev_read,
+ 	.write = nfc_i2c_dev_write,
+ 	.open = nfc_dev_open,
+@@ -267,7 +266,7 @@ static const struct file_operations nfc_i2c_dev_fops = {
+ 	.unlocked_ioctl = nfc_dev_ioctl,
+ };
+ 
+-int nfc_i2c_dev_probe(struct i2c_client *client, const struct i2c_device_id *id)
++int nfc_i2c_dev_probe(struct i2c_client *client)
+ {
+ 	int ret = 0;
+ 	struct nfc_dev *nfc_dev = NULL;
+@@ -384,7 +383,7 @@ err:
+ 	return ret;
+ }
+ 
+-int nfc_i2c_dev_remove(struct i2c_client *client)
++void nfc_i2c_dev_remove(struct i2c_client *client)
+ {
+ 	int ret = 0;
+ 	struct nfc_dev *nfc_dev = NULL;
+@@ -394,11 +393,11 @@ int nfc_i2c_dev_remove(struct i2c_client *client)
+ 	if (!nfc_dev) {
+ 		pr_err("%s: device doesn't exist anymore\n", __func__);
+ 		ret = -ENODEV;
+-		return ret;
++		return;
+ 	}
+ 	if (nfc_dev->dev_ref_count > 0) {
+ 		pr_err("%s: device already in use\n", __func__);
+-		return -EBUSY;
++		return;
+ 	}
+ 	device_init_wakeup(&client->dev, false);
+ 	free_irq(client->irq, nfc_dev);
+@@ -409,7 +408,7 @@ int nfc_i2c_dev_remove(struct i2c_client *client)
+ 	kfree(nfc_dev->read_kbuf);
+ 	kfree(nfc_dev->write_kbuf);
+ 	kfree(nfc_dev);
+-	return ret;
++	return;
+ }
+ 
+ int nfc_i2c_dev_suspend(struct device *device)
+diff --git a/nfc/i2c_drv.h b/pn7160/i2c_drv.h
+similarity index 91%
+rename from nfc/i2c_drv.h
+rename to pn7160/i2c_drv.h
+index b6b4910..7bbab7a 100755
+--- a/nfc/i2c_drv.h
++++ b/pn7160/i2c_drv.h
+@@ -37,9 +37,8 @@ struct i2c_dev {
+ };
+ 
+ long nfc_i2c_dev_ioctl(struct file *pfile, unsigned int cmd, unsigned long arg);
+-int nfc_i2c_dev_probe(struct i2c_client *client,
+-		      const struct i2c_device_id *id);
+-int nfc_i2c_dev_remove(struct i2c_client *client);
++int nfc_i2c_dev_probe(struct i2c_client *client);
++void nfc_i2c_dev_remove(struct i2c_client *client);
+ int nfc_i2c_dev_suspend(struct device *device);
+ int nfc_i2c_dev_resume(struct device *device);
+ 
+diff --git a/nfc/spi_drv.c b/pn7160/spi_drv.c
+similarity index 99%
+rename from nfc/spi_drv.c
+rename to pn7160/spi_drv.c
+index ebebfff..0aeae5b 100755
+--- a/nfc/spi_drv.c
++++ b/pn7160/spi_drv.c
+@@ -328,7 +328,6 @@ ssize_t nfc_spi_dev_write(struct file *filp, const char __user *buf,
+ 
+ static const struct file_operations nfc_spi_dev_fops = {
+ 	.owner = THIS_MODULE,
+-	.llseek = no_llseek,
+ 	.read = nfc_spi_dev_read,
+ 	.write = nfc_spi_dev_write,
+ 	.open = nfc_dev_open,
+@@ -484,7 +483,7 @@ err:
+ 	return ret;
+ }
+ 
+-int nfc_spi_dev_remove(struct spi_device *client)
++void nfc_spi_dev_remove(struct spi_device *client)
+ {
+ 	int ret = 0;
+ 	struct nfc_dev *nfc_dev = NULL;
+@@ -494,11 +493,11 @@ int nfc_spi_dev_remove(struct spi_device *client)
+ 	if (!nfc_dev) {
+ 		pr_err("%s: device doesn't exist anymore\n", __func__);
+ 		ret = -ENODEV;
+-		return ret;
++		return;
+ 	}
+ 	if (nfc_dev->dev_ref_count > 0) {
+ 		pr_err("%s: device already in use\n", __func__);
+-		return -EBUSY;
++		return;
+ 	}
+ 	device_init_wakeup(&client->dev, false);
+ 	free_irq(client->irq, nfc_dev);
+@@ -509,7 +508,7 @@ int nfc_spi_dev_remove(struct spi_device *client)
+ 	kfree(nfc_dev->read_kbuf);
+ 	kfree(nfc_dev->write_kbuf);
+ 	kfree(nfc_dev);
+-	return ret;
++	return;
+ }
+ 
+ int nfc_spi_dev_suspend(struct device *device)
+diff --git a/nfc/spi_drv.h b/pn7160/spi_drv.h
+similarity index 97%
+rename from nfc/spi_drv.h
+rename to pn7160/spi_drv.h
+index aff9adc..1662a23 100755
+--- a/nfc/spi_drv.h
++++ b/pn7160/spi_drv.h
+@@ -48,7 +48,7 @@ struct spi_dev {
+ };
+ 
+ int nfc_spi_dev_probe(struct spi_device *client);
+-int nfc_spi_dev_remove(struct spi_device *client);
++void nfc_spi_dev_remove(struct spi_device *client);
+ int nfc_spi_dev_suspend(struct device *device);
+ int nfc_spi_dev_resume(struct device *device);
+ uint8_t *add_spi_write_prefix(uint8_t *cmd);
+-- 
+2.34.1
+

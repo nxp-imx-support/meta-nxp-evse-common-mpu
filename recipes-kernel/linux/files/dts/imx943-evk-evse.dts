@@ -1,0 +1,108 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2025 NXP
+ */
+
+#include "imx943-evk.dts"
+
+&lpuart12 {
+	/* sigbrd */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart12>;
+	status = "okay";
+};
+
+&sai3 {
+	/* disabled due to overlap with NFC */
+	status = "disabled";
+};
+
+&lpi2c6 {
+	pca9544_i2c6: i2c-mux@77 {
+		i2c@0 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		
+			nxpnfc: nxpnfc@28 {
+				compatible = "nxp,nxpnfc";
+				reg = <0x28>;
+				nxp,nxpnfc-irq = <&gpio2 31 GPIO_ACTIVE_HIGH>;
+				nxp,nxpnfc-ven = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+				nxp,nxpnfc-fw-dwnld = <&gpio3 15 GPIO_ACTIVE_HIGH>;
+			};
+		};
+
+		i2c@3 {
+			pcal6416_i2c6_u44: gpio@20 {
+				spi8-sel1-hog {
+					gpio-hog;
+					gpios = <5 GPIO_ACTIVE_HIGH>;
+					output-high;
+				};
+
+				spi8-sel3-hog {
+					gpio-hog;
+					gpios = <6 GPIO_ACTIVE_HIGH>;
+					output-high;
+				};
+
+				sai3-sel-hog {
+					gpio-hog;
+					gpios = <11 GPIO_ACTIVE_HIGH>;
+					output-low;
+				};
+			};		
+		};
+	};
+};
+
+&lpspi8 {
+	cs-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
+	num-cs = <2>;
+	pinctrl-0 = <&pinctrl_lpspi8>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	cg5317: ethernet@0 {
+		status = "okay";
+		compatible = "cg,cg5317";
+		reg = <0x0>;
+		interrupts-extended = <&gpio2 22 IRQ_TYPE_EDGE_RISING>, <&gpio3 8 IRQ_TYPE_EDGE_RISING>;
+		interrupt-names = "gp_irq", "rx_irq";
+		spi-cpha; /* SPI mode: CPHA=1 */
+		spi-max-frequency = <8000000>; /* freq: 8 MHz */
+		iface-name-prefix = "seth";
+		iface-idx = <0x0>;
+	};
+};
+
+&scmi_iomuxc {
+	pinctrl_uart12: uart12grp {
+		fsl,pins = <
+			IMX94_PAD_GPIO_IO26__LPUART12_TX	0x31e
+			IMX94_PAD_GPIO_IO27__LPUART12_RX	0x31e
+		>;
+	};
+	
+	pinctrl_lpspi8: lpspi8grp {
+		fsl,pins = <
+			IMX94_PAD_GPIO_IO12__GPIO2_IO12			0x3fe
+			IMX94_PAD_GPIO_IO13__LPSPI8_SIN			0x3fe
+			IMX94_PAD_GPIO_IO14__LPSPI8_SOUT		0x3fe
+			IMX94_PAD_GPIO_IO15__LPSPI8_SCK			0x3fe
+			IMX94_PAD_GPIO_IO22__GPIO2_IO22			0x3fe
+			IMX94_PAD_GPIO_IO30__GPIO2_IO30			0x3fe
+			IMX94_PAD_GPIO_IO40__GPIO3_IO8			0x3fe
+		>;
+	};
+
+	pinctrl_hog: hoggrp {
+		fsl,pins = <
+			IMX94_PAD_GPIO_IO46__GPIO3_IO14			0x3fe
+			IMX94_PAD_GPIO_IO47__GPIO3_IO15 		0x3fe
+			IMX94_PAD_GPIO_IO31__GPIO2_IO31		    0x3fe
+		>;
+	};
+
+};

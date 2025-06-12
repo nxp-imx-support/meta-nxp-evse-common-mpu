@@ -1,0 +1,58 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2023 NXP
+ */
+
+/dts-v1/;
+
+#include "imx8mp-evk-evse.dts"
+
+/delete-node/ &nxpnfc;
+
+&ecspi2 {
+	pinctrl-2 = <&pinctrl_cg5317>;	
+	spidev0: spi@0 {
+		compatible = "lwn,bk4";
+		reg = <0x0>;
+		spi-cpha;
+		spi-max-frequency = <8000000>;
+		spi-cpol;
+	};
+};
+
+&i2c3 {
+	nxpnfc: nxpnfc@28 {
+		compatible = "nxp,nxpnfc";
+		reg = <0x28>;
+		nxp,nxpnfc-irq = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+		nxp,nxpnfc-ven = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+		nxp,nxpnfc-fw-dwnld = <&gpio3 20 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&mipi_dsi {
+	panel@0 {
+		compatible = "raydium,rm67199";
+		reg = <0>;
+		pinctrl-0 = <&pinctrl_mipi_dsi_en>;
+		reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
+		dsi-lanes = <4>;
+		video-mode = <2>;	/* 0: burst mode
+					 * 1: non-burst mode with sync event
+					 * 2: non-burst mode with sync pulse
+					 */
+		panel-width-mm = <68>;
+		panel-height-mm = <121>;
+		status = "okay";
+	};
+};
+
+&iomuxc {
+	pinctrl_cg5317: cg5317grp {
+                fsl,pins = <
+                        MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09           0x100
+                        MX8MP_IOMUXC_ECSPI1_MISO__GPIO5_IO08          0x100
+                >;
+        };
+
+};

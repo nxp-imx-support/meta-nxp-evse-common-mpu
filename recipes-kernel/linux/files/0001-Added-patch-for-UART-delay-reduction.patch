@@ -1,0 +1,27 @@
+From 3277f1ced5e767a1b4486b4a04d088d0a654716f Mon Sep 17 00:00:00 2001
+From: Octavian-Tiberiu Sirbu <octavian-tiberiu.sirbu@nxp.com>
+Date: Mon, 14 Apr 2025 12:59:51 +0300
+Subject: [PATCH] Added patch for UART delay reduction
+
+Signed-off-by: Octavian-Tiberiu Sirbu <octavian-tiberiu.sirbu@nxp.com>
+Upstream-Status: Pending
+---
+ drivers/tty/serial/fsl_lpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 77efa7ee6eda..860baf123be8 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1692,7 +1692,7 @@ static void lpuart32_setup_watermark_enable(struct lpuart_port *sport)
+ 
+ 	temp = lpuart32_read(&sport->port, UARTCTRL);
+ 	temp |= UARTCTRL_RE | UARTCTRL_TE;
+-	temp |= FIELD_PREP(UARTCTRL_IDLECFG, 0x7);
++	temp |= FIELD_PREP(UARTCTRL_IDLECFG, 0x3);
+ 	lpuart32_write(&sport->port, temp, UARTCTRL);
+ }
+ 
+-- 
+2.34.1
+

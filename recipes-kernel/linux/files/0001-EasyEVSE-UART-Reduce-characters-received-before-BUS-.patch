@@ -5,6 +5,7 @@ Subject: [PATCH 1/2] [EasyEVSE] UART: Reduce characters received before BUS
  idle
 
 Signed-off-by: Peter Tian <peter.tian@nxp.com>
+Upstream-Status: Pending
 ---
  drivers/tty/serial/fsl_lpuart.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

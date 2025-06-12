@@ -1,0 +1,75 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2023 NXP
+ */
+
+/dts-v1/;
+
+#include "imx8mp-evk.dts"
+
+/delete-node/ &spidev1;
+
+&adv_bridge {
+	status = "disabled";
+};
+
+&ecspi2 {
+	nxpnfc: nxpnfc@0 {
+	compatible = "nxp,nxpnfc";
+	reg = <0>;
+	nxp,nxpnfc-irq = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+	nxp,nxpnfc-ven = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+	nxp,nxpnfc-fw-dwnld = <&gpio3 20 GPIO_ACTIVE_HIGH>;
+	spi-max-frequency = <7000000>;
+	};
+};
+
+&i2c2 {
+	touchscreen@14 {
+		compatible = "goodix,gt1151";
+		reg = <0x14>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_i2c2_synaptics_dsx_io>;
+		interrupt-parent = <&gpio1>;
+		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
+		irq-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+		edge-failling-trigger;
+		touchscreen-size-x = <1080>;
+		touchscreen-size-y = <1920>;
+	};
+};
+
+&micfil {
+	status = "disabled";
+};
+
+&mipi_dsi {
+	panel@0 {
+		compatible = "raydium,rm67199";
+		reg = <0>;
+		pinctrl-0 = <&pinctrl_mipi_dsi_en>;
+		reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
+		dsi-lanes = <4>;
+		video-mode = <2>;	/* 0: burst mode
+					 * 1: non-burst mode with sync event
+					 * 2: non-burst mode with sync pulse
+					 */
+		panel-width-mm = <68>;
+		panel-height-mm = <121>;
+		status = "okay";
+	};
+};
+
+&uart3 {
+	/delete-property/ uart-has-rtscts;
+	pinctrl-0 = <&pinctrl_uart3_meter>;
+};
+
+&iomuxc {
+	pinctrl_uart3_meter: uart3grp {
+		fsl,pins = <
+			MX8MP_IOMUXC_ECSPI1_SCLK__UART3_DCE_RX		0x140
+			MX8MP_IOMUXC_ECSPI1_MOSI__UART3_DCE_TX		0x140
+		>;
+	};
+};
