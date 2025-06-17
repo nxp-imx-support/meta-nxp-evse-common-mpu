@@ -48,7 +48,7 @@ do_install:append() {
 
     # Trust EdgeLock 2GO CA certificate
     install -d ${D}${prefix}/local/share/ca-certificates
-    install -m 0644 ${WORKDIR}/device-link.edgelock2go.com.crt ${D}${prefix}/local/share/ca-certificates
+    install -m 0644 ${WORKDIR}/sources-unpack/device-link.edgelock2go.com.crt ${D}${prefix}/local/share/ca-certificates
 
     sed -i "s#/usr/local/lib/libsss_engine.so#/usr/lib/libsss_engine.so#g" ${S}/demos/linux/common/openssl11_sss_se050.cnf
     install -d ${D}${sysconfdir}/ssl/
