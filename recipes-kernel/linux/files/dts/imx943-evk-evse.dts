@@ -20,15 +20,15 @@
 &lpi2c6 {
 	pca9544_i2c6: i2c-mux@77 {
 		i2c@0 {
-			reg = <1>;
+			reg = <0>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		
 			nxpnfc: nxpnfc@28 {
 				compatible = "nxp,nxpnfc";
 				reg = <0x28>;
-				nxp,nxpnfc-irq = <&gpio2 31 GPIO_ACTIVE_HIGH>;
-				nxp,nxpnfc-ven = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+				nxp,nxpnfc-irq = <&gpio2 31 IRQ_TYPE_EDGE_RISING>;
+				nxp,nxpnfc-ven = <&gpio3 14 GPIO_ACTIVE_LOW>;
 				nxp,nxpnfc-fw-dwnld = <&gpio3 15 GPIO_ACTIVE_HIGH>;
 			};
 		};
@@ -38,12 +38,18 @@
 				spi8-sel1-hog {
 					gpio-hog;
 					gpios = <5 GPIO_ACTIVE_HIGH>;
-					output-high;
+					output-low;
 				};
 
 				spi8-sel3-hog {
 					gpio-hog;
 					gpios = <6 GPIO_ACTIVE_HIGH>;
+					output-low;
+				};
+
+				uart-mc-sel-hog {
+					gpio-hog;
+					gpios = <7 GPIO_ACTIVE_HIGH>;
 					output-high;
 				};
 
@@ -91,17 +97,17 @@
 			IMX94_PAD_GPIO_IO13__LPSPI8_SIN			0x3fe
 			IMX94_PAD_GPIO_IO14__LPSPI8_SOUT		0x3fe
 			IMX94_PAD_GPIO_IO15__LPSPI8_SCK			0x3fe
-			IMX94_PAD_GPIO_IO22__GPIO2_IO22			0x3fe
+			IMX94_PAD_GPIO_IO22__GPIO2_IO22			0x5fe
 			IMX94_PAD_GPIO_IO30__GPIO2_IO30			0x3fe
-			IMX94_PAD_GPIO_IO40__GPIO3_IO8			0x3fe
+			IMX94_PAD_GPIO_IO40__GPIO3_IO8			0x5fe
 		>;
 	};
 
 	pinctrl_hog: hoggrp {
 		fsl,pins = <
-			IMX94_PAD_GPIO_IO46__GPIO3_IO14			0x3fe
-			IMX94_PAD_GPIO_IO47__GPIO3_IO15 		0x3fe
-			IMX94_PAD_GPIO_IO31__GPIO2_IO31		    0x3fe
+			IMX94_PAD_GPIO_IO46__GPIO3_IO14			0x1fe
+			IMX94_PAD_GPIO_IO47__GPIO3_IO15 		0x1fe
+			IMX94_PAD_GPIO_IO31__GPIO2_IO31		    0x5fe
 		>;
 	};
 

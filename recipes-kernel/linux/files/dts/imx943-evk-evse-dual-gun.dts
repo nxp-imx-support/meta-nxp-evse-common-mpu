@@ -1,0 +1,52 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2025 NXP
+ */
+
+#include "imx943-evk-evse.dts"
+
+/delete-node/ &spidev0;
+/delete-node/ &pinctrl_lpspi3;
+
+&lpuart11 {
+	/* sigbrd */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart11>;
+	status = "okay";
+};
+
+&lpspi3 {
+	cg5317_second: ethernet@0 {
+		status = "okay";
+		compatible = "cg,cg5317";
+		reg = <0x0>;
+		interrupts-extended = <&gpio2 2 IRQ_TYPE_EDGE_RISING>, <&gpio2 3 IRQ_TYPE_EDGE_RISING>;
+		interrupt-names = "gp_irq", "rx_irq";
+		spi-cpha; /* SPI mode: CPHA=1 */
+		spi-max-frequency = <8000000>; /* freq: 8 MHz */
+		iface-name-prefix = "seth";
+		iface-idx = <0x1>;
+	};
+};
+
+&scmi_iomuxc {
+	pinctrl_uart11: uart12grp {
+		fsl,pins = <
+			IMX94_PAD_GPIO_IO24__LPUART11_TX	0x31e
+			IMX94_PAD_GPIO_IO25__LPUART11_RX	0x31e
+		>;
+	};
+
+	pinctrl_lpspi3: lpspi3grp {
+		fsl,pins = <
+			IMX94_PAD_GPIO_IO08__GPIO2_IO8			0x3fe
+			IMX94_PAD_GPIO_IO09__LPSPI3_SIN			0x3fe
+			IMX94_PAD_GPIO_IO10__LPSPI3_SOUT		0x3fe
+			IMX94_PAD_GPIO_IO11__LPSPI3_SCK			0x3fe
+			IMX94_PAD_GPIO_IO02__GPIO2_IO2			0x5fe
+			IMX94_PAD_GPIO_IO32__GPIO3_IO0			0x3fe
+			IMX94_PAD_GPIO_IO03__GPIO2_IO3			0x5fe
+		>;
+	};
+
+};

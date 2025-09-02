@@ -9,4 +9,4 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-evse.dtb imx8mp-evk-evse-ph1_2-cg5317.dtb
 
 dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk-evse.dtb imx93-11x11-evk-evse-lvds.dtb imx93-11x11-evk-evse-ph1_2-cg5317.dtb
 
-dtb-$(CONFIG_ARCH_MXC) += imx943-evk-evse.dtb 
+dtb-$(CONFIG_ARCH_MXC) += imx943-evk-evse.dtb imx943-evk-evse-dual-gun.dtb
