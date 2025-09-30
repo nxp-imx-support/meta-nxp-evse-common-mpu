@@ -118,6 +118,28 @@
 	};
 };
 
+&lpspi7 {
+	fsl,spi-num-chipselects = <1>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&pinctrl_lpspi7 &pinctrl_lpspi7_cs>;
+	pinctrl-1 = <&pinctrl_lpspi7 &pinctrl_lpspi7_cs>;
+	cs-gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
+	status = "okay";
+
+	cg5317: ethernet@0 {
+		status = "okay";
+		compatible = "cg,cg5317";
+		reg = <0x0>;
+		interrupts-extended = <&gpio2 12 IRQ_TYPE_EDGE_RISING>, <&gpio2 13 IRQ_TYPE_EDGE_RISING>;
+		interrupt-names = "gp_irq", "rx_irq";
+		spi-cpha; /* SPI mode: CPHA=1 */
+		spi-max-frequency = <8000000>; /* freq: 8 MHz */
+		iface-name-prefix = "seth";
+		iface-idx = <0x0>;
+	};
+
+};
+
 &lpuart3 { /* Meter Board*/
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart3>;
@@ -142,6 +164,33 @@
 			MX93_PAD_GPIO_IO00__GPIO2_IO00		0x3fe
 		>;
 	};
+
+	pinctrl_lpspi7: lpspi7grp {
+		fsl,pins = <
+			MX93_PAD_GPIO_IO05__LPSPI7_SIN		0x3fe
+			MX93_PAD_GPIO_IO06__LPSPI7_SOUT		0x3fe
+			MX93_PAD_GPIO_IO07__LPSPI7_SCK		0x3fe
+
+			MX93_PAD_GPIO_IO12__GPIO2_IO12		0x50e
+            MX93_PAD_GPIO_IO13__GPIO2_IO13      0x50e
+            MX93_PAD_GPIO_IO18__GPIO2_IO18      0x50e
+		>;
+	};
+
+	pinctrl_lpspi7_cs: lpspi7cs {
+		fsl,pins = <
+			MX93_PAD_GPIO_IO04__GPIO2_IO04		0x3fe
+		>;
+	};
+
+	pinctrl_cg5317: cg5317grp {
+        fsl,pins = <
+            MX93_PAD_GPIO_IO12__GPIO2_IO12		0x50e
+            MX93_PAD_GPIO_IO13__GPIO2_IO13      0x50e
+            MX93_PAD_GPIO_IO18__GPIO2_IO18      0x50e
+        >;
+    };
+
 
 	pinctrl_uart3: uart3grp {
 		fsl,pins = <
