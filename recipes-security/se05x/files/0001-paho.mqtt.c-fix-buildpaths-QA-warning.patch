@@ -13,6 +13,7 @@ SET(LIBS_SYSTEM "${LIBS_SYSTEM}" anl)
 To satisfy QA.
 
 Signed-off-by: Marouene Boubakri <marouene.boubakri@nxp.com>
+Upstream-Status: Pending
 ---
  ext/paho.mqtt.c/src/CMakeLists.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

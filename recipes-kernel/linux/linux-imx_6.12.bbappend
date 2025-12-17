@@ -7,7 +7,7 @@ SRC_URI:append = " \
     file://0001-Updated-repo-for-imx-LF-6.12.3.patch;apply=no \
     file://dts/ \
     file://Makefile_DTS_EasyEVSE \
-    file://0001-Added-patch-for-UART-delay-reduction.patch \
+    file://0001-Added-patch-for-UART-delay-reduction-6_12_20.patch \
     file://nfc.cfg \
 "
 SRCREV_pn7160="b2539909b6c073ee7949c7edd48d8e20cd1865a8"

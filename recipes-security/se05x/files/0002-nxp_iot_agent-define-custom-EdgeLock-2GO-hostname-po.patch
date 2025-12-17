@@ -7,6 +7,7 @@ Allow defining custom values for EDGELOCK2GO_HOSTNAME and EDGELOCK2GO_PORT
 via CMake variables.
 
 Signed-off-by: Marouene Boubakri <marouene.boubakri@nxp.com>
+Upstream-Status: Pending
 ---
  CMakeLists.txt | 4 ++++
  1 file changed, 4 insertions(+)
