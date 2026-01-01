@@ -9,7 +9,7 @@ PV = "4.05.000"
 RDEPENDS:${PN} += "libgpiod"
 
 LICENSE = "Proprietary"
-LIC_FILES_CHKSUM = "file://COPYING;md5=ef8ffca65ac64435c687e5b56e69b127"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=ef8ffca65ac64435c687e5b56e69b127"
 
 SRC_URI = "file://${TOPDIR}/../CG5317_${PV}.tgz"
 SRC_URI[md5sum] = "6c56e7e8eebe28b0f257eb99975a3910"
