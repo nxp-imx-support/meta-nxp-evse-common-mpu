@@ -27,7 +27,7 @@ RDEPENDS:${PN}:append = "\
 
 EXTRA_OECMAKE += " \
     -DPTMW_Applet=SE050_E \
-    -DPTMW_SE05X_Ver=03_XX \
+    -DPTMW_SE05X_Ver=07_02 \
     -DPTMW_SE05X_Auth=None \
     -DPTMW_SCP=None \
     -DPTMW_HostCrypto=OPENSSL \
